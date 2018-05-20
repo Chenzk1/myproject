@@ -1,6 +1,18 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
+export async function productData() {
+  return request('/api/productdata');
+}
+
+export async function stopData() {
+  return request('/api/stopdata');
+}
+
+export async function rejectData() {
+  return request('/api/rejectdata');
+}
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }

@@ -12,7 +12,7 @@ export function getTimeDistance(type) {
     now.setHours(0);
     now.setMinutes(0);
     now.setSeconds(0);
-    return [moment(now), moment(now.getTime() + (oneDay - 1000))];
+    return [moment(now), moment(now.getTime() + (oneDay - 1000))];  //返回当前时间和当前时间的前一秒
   }
 
   if (type === 'week') {

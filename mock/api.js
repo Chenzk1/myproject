@@ -65,7 +65,7 @@ const user = [
   '谭小仪',
   '仲尼',
 ];
-
+/*
 export function fakeList(count) {
   const list = [];
   for (let i = 0; i < count; i += 1) {
@@ -110,7 +110,123 @@ export function fakeList(count) {
 
   return list;
 }
-
+*/
+export function fakeList(count) {
+  const list = [{
+            key: '1',
+            ID: 1,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '2',
+            ID: 2,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '2',
+            ID: 2,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '2',
+            ID: 2,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+            }, {
+            key: '3',
+            ID: 3,
+            name: 'John Brown',
+            department: 'HR',
+            days: 20,
+            position: '工程师',
+        }];
+  return list;
+}
 export function getFakeList(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -293,9 +409,244 @@ export const getActivities = [
     template: '在 @{group} 新建项目 @{project}',
   },
 ];
+const yearData = [];
+for (let i = 0; i < 12; i += 1) {
+  yearData.push({
+    x: `${i +2}月`,
+    y: Math.floor(Math.random() * 1000) + 200,
+  });
+}
+const monthData = [];
+for (let i = 0; i < 13; i += 1) {
+  monthData.push({
+    month: i+1,
+    id: i,
+    num: Math.floor(Math.random() * 1000) + 200,
+  });
+}
+export const getProductData = {
+  monthData,
+  yearData
+};
 
+
+const stopCause = [
+  {
+    id: 1,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 2,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 3,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 4,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 5,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },
+];    
+const stopCausePie = [
+  {
+    x: '家用电器',
+    y: 4544,
+  },
+  {
+    x: '食用酒水',
+    y: 3321,
+  },
+  {
+    x: '个护健康',
+    y: 3113,
+  },
+  {
+    x: '服饰箱包',
+    y: 2341,
+  },
+  {
+    x: '母婴产品',
+    y: 1231,
+  },
+  {
+    x: '其他',
+    y: 1231,
+  },
+];
+const stopFault = [
+  {
+    id: 1,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 2,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 3,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 4,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },{
+    id: 5,
+    reason:"frra",
+    time: 23,
+    range: 43.
+  },
+];
+const stopRadar = [
+    {
+        name: "停机工时（h）",
+        label: "冲杯-拉伸区",
+        value: 147,
+    },{
+        name: "停机工时（h）",
+        label: "辅助设备",
+        value: 20,
+    },{
+        name: "停机工时（h）",
+        label: "清洗-打底-彩印区",
+        value: 42,
+    },{
+        name: "停机工时（h）",
+        label: "烘干-内涂区",
+        value: 7,
+    },{
+        name: "停机工时（h）",
+        label: "缩翻-成品区",
+        value: 62,
+    },
+    ]
+export const getStopData = {
+  stopCause,
+  stopCausePie,
+  stopFault,
+  stopRadar
+};
+const rejectYear = [
+  {
+    month: 1,
+    totalProduct:24532,
+    qulifyProduct: 24554,
+    totalWaste:2445,
+  },{
+    month: 1,
+    totalProduct:24332,
+    qulifyProduct: 24554,
+    totalWaste:2445,
+  },{
+    month: 1,
+    totalProduct:245332,
+    qulifyProduct: 24554,
+    totalWaste:2445,
+  },{
+    month: 1,
+    totalProduct:245332,
+    qulifyProduct: 24554,
+    totalWaste:2445,
+  },
+]
+const rejectMonth = [
+  {
+    x: "1y",
+    y: 6245232,
+  },{
+    x: "2y",
+    y: 7255322,
+  },{
+    x: "3y",
+    y: 8275322,
+  },{
+    x: "4y",
+    y: 8242400,
+  },{
+    x: "5y",
+    y: 6212532,
+  },{
+    x: "6y",
+    y: 7228532,
+  },{
+    x: "7y",
+    y: 6228532,
+  },{
+    x: "8y",
+    y: 8228532,
+  },{
+    x: "9y",
+    y: 8228532,
+  },{
+    x: "10y",
+    y: 7228532,
+  },{
+    x: "11y",
+    y: 5228532,
+  },{
+    x: "12y",
+    y: 7228532,
+  },
+]
+const rejectPercent = [
+  {
+    x:1,
+    y:123,
+  },{
+    x:2,
+    y:144,
+  },{
+    x:3,
+    y:234,
+  },{
+    x:4,
+    y:155,
+  },{
+    x:5,
+    y:200,
+  },
+];
+const rejectFenbu = [
+  {
+    x:'机械',
+    y:1234,
+  },{
+    x:'机械',
+    y:1234,
+  },{
+    x:'机械',
+    y:1234,
+  },{
+    x:'机械',
+    y:1234,
+  },
+];
+export const getRejectData = {
+  rejectYear,
+  rejectMonth,
+  rejectPercent,
+  rejectFenbu,
+};
 export default {
   getNotice,
   getActivities,
   getFakeList,
+  getProductData,
+  getStopData,
+  getRejectData,
 };

@@ -71,7 +71,7 @@ export default class ActiveChart extends Component {
         )}
         {activeData && ( //3个坐标值
           <div className={styles.activeChartLegend}>
-            <span>5.1</span>
+            <span>00:00</span>
             <span>{activeData[Math.floor(activeData.length / 2)].x}</span>
             <span>{activeData[activeData.length - 1].x}</span>
           </div>

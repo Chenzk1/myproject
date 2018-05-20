@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Tooltip } from 'antd';
+import { Row, Col, Card, Tooltip, Progress, List, Table } from 'antd';
 import numeral from 'numeral';
 import { Pie, WaterWave, Gauge, TagCloud } from 'components/Charts';
 import NumberInfo from 'components/NumberInfo';
@@ -26,15 +26,82 @@ const havePermissionAsync = new Promise(resolve => {
   loading: loading.models.monitor,
 }))
 export default class Monitor extends PureComponent {
-  componentDidMount() {
-    this.props.dispatch({
-      type: 'monitor/fetchTags',
-    });
-  }
 
   render() {
     const { monitor, loading } = this.props;
-    const { tags } = monitor;
+
+    const taskColumn =  [{
+      title: '订单编号',
+      dataIndex: 'ID',
+      key: 'ID',
+      },{
+      title: '订单名',//列头显示文字
+      dataIndex: 'name',//在数据项中的key，则data中要有个name项
+      key: 'name',//React需要的key，有dataIndex则无需
+      }, {
+      title: '数量(万罐)',
+      dataIndex: 'num',
+      key: 'num',
+      }, {
+      title: '规格(ml)',
+      dataIndex: 'standard',
+      key: 'standard',
+      }, {
+      title: '进度',
+      key: 'progress',
+      width: 400,
+      render: ({data,status}) =>(
+        <span>
+          <Progress percent={data} style={{ strokeWidth:"8", width: '100%',height: '16' }} />
+        </span>
+      )                                                
+    }];
+    const taskData = [{
+        key: '1',
+        ID: 1602,
+        name: '台州石梁百威哈冰爽',
+        num: 40,
+        standard: 500,
+        data: 100,
+      },{
+        key: '2',
+        ID: 1705,
+        name: '浙江太古可乐',
+        num: 150,
+        standard: 330,
+        data: 100,
+      },{
+        key: '3',
+        ID: 1701,
+        name: '杭州青啤崂山金指环',
+        num: 25,
+        standard: 500,
+        data: 48,
+        status: 'active',
+      },{
+        key: '4',
+        ID: 1702,
+        name: '锐澳微醺',
+        num: 30,
+        standard: 500,
+        data:83,
+        status: "active",
+      },{
+        key: '5',
+        ID: 1503,
+        name: '余杭华润8度勇闯天涯',
+        num: 100,
+        standard: 330,
+        data:56,
+      },{
+        key: '6',
+        Id: 1505,
+        name: '黄河青稞',
+        num: 600,
+        standard: 500,
+        data:16,
+        status: "active",
+    }];
 
     return (
       <Fragment>
@@ -54,7 +121,13 @@ export default class Monitor extends PureComponent {
             </Card>
           </Col>
         </Row>
-
+        <Card title="当前任务生产进度" className={styles.card} style={{marginBottom: 24}}>
+          <Table
+              selectedRows 
+              columns={taskColumn} 
+              dataSource={taskData}
+          />
+        </Card>
         <Row gutter={24}>
           <Col xl={18} lg={24} sm={24} xs={24}>
             <Card title="各厂家生产占比" bordered={false} className={styles.pieCard}>
@@ -64,7 +137,7 @@ export default class Monitor extends PureComponent {
                     animate={false}
                     percent={28}
                     subTitle="加多宝"
-                    total="28%"
+                    total="24%"
                     height={148}
                     lineWidth={2}
                   />
@@ -110,7 +183,7 @@ export default class Monitor extends PureComponent {
                     color="#2D6ECF"
                     percent={20}
                     subTitle="昆明华狮"
-                    total="20%" //这是显示值
+                    total="14%" //这是显示值
                     height={148}
                     lineWidth={2}
                   />
@@ -120,8 +193,8 @@ export default class Monitor extends PureComponent {
                     animate={false}
                     color="#7F2CB5"
                     percent={9}
-                    subTitle="华润纯生"
-                    total="9%"
+                    subTitle="其它"
+                    total="19%"
                     height={148}
                     lineWidth={2}
                   />
@@ -135,7 +208,7 @@ export default class Monitor extends PureComponent {
                 <Pie
                   animate={true}
                   percent={62}
-                  subTitle="330ml"
+                  subTitle="500ml"
                   total="62%"
                   height={148}
                   lineWidth={2}
@@ -145,33 +218,12 @@ export default class Monitor extends PureComponent {
                 <Pie
                   animate={true}
                   percent={38}
-                  subTitle="500ml"
+                  subTitle="330ml"
                   total="38%"
                   height={148}
                   lineWidth={2}
                 />
               </Row>
-            </Card>
-          </Col>
-        </Row>
-        <Row gutter={24} style={{ padding: '16px 0' }}>
-          <Col xl={6} lg={12} sm={24} xs={24}>
-            <Card
-              title="热门搜索"
-              loading={loading}
-              bordered={false}
-              bodyStyle={{ overflow: 'hidden' }}
-            >
-              <TagCloud data={tags} height={161} />
-            </Card>
-          </Col>
-          <Col xl={6} lg={12} sm={24} xs={24}>
-            <Card
-              title="资源剩余"
-              bodyStyle={{ textAlign: 'center', fontSize: 0 }}
-              bordered={false}
-            >
-              <WaterWave height={161} title="补贴资金剩余" percent={34} />
             </Card>
           </Col>
         </Row>

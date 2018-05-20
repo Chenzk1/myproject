@@ -2,73 +2,15 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import { Row, Col, Card, List, Avatar, Button } from 'antd';
 
 import { Radar } from 'components/Charts';
 import EditableLinkGroup from 'components/EditableLinkGroup';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import avatar from '../../assets/avatar.jpg';
 
 import styles from './BasicList.less';
-
-const links = [
-  {
-    title: '操作一',
-    href: '',
-  },
-  {
-    title: '操作二',
-    href: '',
-  },
-  {
-    title: '操作三',
-    href: '',
-  },
-  {
-    title: '操作四',
-    href: '',
-  },
-  {
-    title: '操作五',
-    href: '',
-  },
-  {
-    title: '操作六',
-    href: '',
-  },
-];
-
-const members = [
-  {
-    id: 'members-1',
-    title: '科学搬砖组',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-    link: '',
-  },
-  {
-    id: 'members-2',
-    title: '程序员日常',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png',
-    link: '',
-  },
-  {
-    id: 'members-3',
-    title: '设计天团',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/gaOngJwsRYRaVAuXXcmB.png',
-    link: '',
-  },
-  {
-    id: 'members-4',
-    title: '中二少女团',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/ubnKSIfAJTxIgXOKlciN.png',
-    link: '',
-  },
-  {
-    id: 'members-5',
-    title: '骗你学计算机',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/WhxKECPNujWoWEFNdnJE.png',
-    link: '',
-  },
-];
+const { Meta } = Card;
 
 @connect(({ project, activities, chart, loading }) => ({
   project,
@@ -77,189 +19,153 @@ const members = [
   projectLoading: loading.effects['project/fetchNotice'],
   activitiesLoading: loading.effects['activities/fetchList'],
 }))
-export default class Workplace extends PureComponent {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'project/fetchNotice',
-    });
-    dispatch({
-      type: 'activities/fetchList',
-    });
-    dispatch({
-      type: 'chart/fetch',
-    });
+export default class BasicList extends PureComponent {
+  state = {
+      text1: "未完成",
+      text2: "未完成",
+      text3: "未完成",
+      text4: "未完成",
+      text5: "未完成",
+      text6: "未完成",      
   }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'chart/clear',
-    });
+  handleClick1 = (e) => {
+    if(this.state.text1 == "未完成")
+    this.setState({text1:"已完成"})
+    else
+    this.setState({text1:"未完成"})    
   }
-
-  renderActivities() {
-    const { activities: { list } } = this.props;
-    return list.map(item => {
-      const events = item.template.split(/@\{([^{}]*)\}/gi).map(key => {
-        if (item[key]) {
-          return (
-            <a href={item[key].link} key={item[key].name}>
-              {item[key].name}
-            </a>
-          );
-        }
-        return key;
-      });
-      return (
-        <List.Item key={item.id}>
-          <List.Item.Meta
-            avatar={<Avatar src={item.user.avatar} />}
-            title={
-              <span>
-                <a className={styles.username}>{item.user.name}</a>
-                &nbsp;
-                <span className={styles.event}>{events} </span>
-              </span>
-            }
-            description={
-              <span className={styles.datetime} title={item.updatedAt}>
-                {moment(item.updatedAt).fromNow()}
-              </span>
-            }
-          />
-        </List.Item>
-      );
-    });
+  handleClick2 = (e) => {
+    if(this.state.text2 == "未完成")
+    this.setState({text2:"已完成"})
+    else
+    this.setState({text2:"未完成"})    
   }
-
+  handleClick3 = (e) => {
+    if(this.state.text3 == "未完成")
+    this.setState({text3:"已完成"})
+    else
+    this.setState({text3:"未完成"})    
+  }
+  handleClick4 = (e) => {
+    if(this.state.text4 == "未完成")
+    this.setState({text4:"已完成"})
+    else
+    this.setState({text4:"未完成"})    
+  }
+  handleClick5 = (e) => {
+    if(this.state.text5 == "未完成")
+    this.setState({text5:"已完成"})
+    else
+    this.setState({text5:"未完成"})    
+  }
+  handleClick6 = (e) => {
+    if(this.state.text6 == "未完成")
+    this.setState({text6:"已完成"})
+    else
+    this.setState({text1:"未完成"})    
+  }
+  
   render() {
-    const {
-      project: { notice },
-      projectLoading,
-      activitiesLoading,
-      chart: { radarData },
-    } = this.props;
-
-    const pageHeaderContent = (//用一个有照片的Card，Doc里有
-    ////用list，那种可以滚动的带头像的来做动态管理，或者发来的消息之类的
-      <div className={styles.pageHeaderContent}>
-        <div className={styles.avatar}>
-          <Avatar
-            size="large"
-            src="https://gw.alipayobjects.com/zos/rmsportal/sBxjgqiuHMGRkIjqlQCd.png"
-          />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.contentTitle}>早安，陈仲锴，祝你开心每一天！</div>
-          <div>浙大电气工程学院-中粮包装 在Dashboard/Workplace</div>
-        </div>
-      </div>
-    );
+    const text1 = this.state.text1;
+    const text2 = this.state.text2;
+    const text3 = this.state.text3;
+    const text4 = this.state.text4;
+    const text5 = this.state.text5;
+    const text6 = this.state.text6;
 
     const extraContent = (
       <div className={styles.extraContent}>
         <div className={styles.statItem}>
-          <p>项目数</p>
-          <p>56</p>
+          <p>任务数</p>
+          <p>9</p>
         </div>
         <div className={styles.statItem}>
-          <p>团队内排名</p>
+          <p>待完成</p>
           <p>
-            8<span> / 24</span>
+            6<span> / 9</span>
           </p>
-        </div>
-        <div className={styles.statItem}>
-          <p>项目访问</p>
-          <p>2,223</p>
         </div>
       </div>
     );
-
+    const gridStyle = {
+      width: '33%',
+      textAlign: 'center',
+    };
+    
     return (
-      <PageHeaderLayout content={pageHeaderContent} extraContent={extraContent}>
+      <PageHeaderLayout>
         <Row gutter={24}>
-          <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+          <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+            <Card
+              hoverable
+              cover={<img alt="头像" src={avatar} height='455' />}
+              height
+            >
+              <Meta
+                title="陈仲锴"
+              />
+              <br/>
+              实习生|杭州中粮 
+              浙江大学电气工程学院
+              chenzk666@gmail.com
+          </Card>
+          </Col>
+          <Col xl={18} lg={24} md={24} sm={24} xs={24}>
             <Card
               className={styles.projectList}
               style={{ marginBottom: 24 }}
               title="进行中的项目"
               bordered={false}
-              extra={<Link to="/">全部项目</Link>}
-              loading={projectLoading}
+              extra={extraContent}
               bodyStyle={{ padding: 0 }}
             >
-              {notice.map(item => (
-                <Card.Grid className={styles.projectGrid} key={item.id}>
-                  <Card bodyStyle={{ padding: 0 }} bordered={false}>
-                    <Card.Meta
-                      title={
-                        <div className={styles.cardTitle}>
-                          <Avatar size="small" src={item.logo} />
-                          <Link to={item.href}>{item.title}</Link>
-                        </div>
-                      }
-                      description={item.description}
-                    />
-                    <div className={styles.projectItemContent}>
-                      <Link to={item.memberLink}>{item.member || ''}</Link>
-                      {item.updatedAt && (
-                        <span className={styles.datetime} title={item.updatedAt}>
-                          {moment(item.updatedAt).fromNow()}
-                        </span>
-                      )}
-                    </div>
-                  </Card>
-                </Card.Grid>
-              ))}
+              <Card.Grid style={gridStyle}>
+                <Meta title="方案拟定" description="进行毕业设计的方案拟定"/>
+                <br/>
+                <Button type="danger">已完成</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="撰写中期报告" description="进行中期报告的撰写"/>
+                <br/>
+                <Button type="danger">已完成</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="前端程序编写" description="进行数据分析系统的前端程序设计"/>
+                <br/>
+                <Button type="danger">已完成</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="后端程序编写" description="进行数据分析系统的后端程序设计"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick1}>{text1}</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="API编写" description="进行数据分析系统的API编写"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick2}>{text2}</Button>
+              </Card.Grid><Card.Grid style={gridStyle}>
+                <Meta title="PLC程序设计" description="进行数据采集系统的PLC程序设计"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick3}>{text3}</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="监控界面设计" description="进行数据采集系统的监控界面设计"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick4}>{text4}</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="撰写毕业论文" description="撰写毕业论文"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick5}>{text5}</Button>
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>
+                <Meta title="毕业设计答辩" description="毕业设计答辩"/>
+                <br/>
+                <Button type="primary" onClick={this.handleClick6}>{text6}</Button>
+              </Card.Grid>
             </Card>
-            <Card
-              bodyStyle={{ padding: 0 }}
-              bordered={false}
-              className={styles.activeCard}
-              title="动态"
-              loading={activitiesLoading}
-            >
-              <List loading={activitiesLoading} size="large">
-                <div className={styles.activitiesList}>{this.renderActivities()}</div>
-              </List>
-            </Card>
-          </Col>
-          <Col xl={8} lg={24} md={24} sm={24} xs={24}>
-            <Card
-              style={{ marginBottom: 24 }}
-              title="快速开始 / 便捷导航"
-              bordered={false}
-              bodyStyle={{ padding: 0 }}
-            >
-              <EditableLinkGroup onAdd={() => {}} links={links} linkElement={Link} />
-            </Card>
-            <Card
-              style={{ marginBottom: 24 }}
-              bordered={false}
-              title="XX 指数"
-              loading={radarData.length === 0}
-            >
-              <div className={styles.chart}>
-                <Radar hasLegend height={343} data={radarData} />
-              </div>
-            </Card>
-            <Card bodyStyle={{ paddingTop: 12, paddingBottom: 12 }} bordered={false} title="团队">
-              <div className={styles.members}>
-                <Row gutter={48}>
-                  {members.map(item => (
-                    <Col span={12} key={`members-item-${item.id}`}>
-                      <Link to={item.link}>
-                        <Avatar src={item.logo} size="small" />
-                        <span className={styles.member}>{item.title}</span>
-                      </Link>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            </Card>
-          </Col>
-        </Row>
+           </Col>
+          </Row>
       </PageHeaderLayout>
     );
   }

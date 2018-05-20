@@ -11,6 +11,9 @@ import {
   Input,
   Select,
   Popover,
+  Tabs,
+  Radio,
+  Table,
 } from 'antd';
 import { connect } from 'dva';
 import FooterToolbar from 'components/FooterToolbar';
@@ -20,6 +23,8 @@ import styles from './style.less';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const FormItem = Form.Item;
+const TabPane = Tabs.TabPane;
 
 const fieldLabels = {
   name: '仓库名',
@@ -57,7 +62,26 @@ const tableData = [
   },
 ];
 
+@connect(({loading})=>({
+    submitting: loading.effects['form/submitRegularForm'],
+}))
+@Form.create()//经 Form.create() 包装过的组件会自带 this.props.form 属性，直接传给 Form 即可。
 class AdvancedForm extends PureComponent {
+  //此函数在submit后处理提交的form，先进行校验，如果校验通过则dispatch action
+    handleSubmit = e =>{
+        //e是合成事件，preventDefault是阻止默认操作
+        e.preventDefault();
+        //校验并获取一组输入域的值与 Error，校验完后，如果校验不通过的菜单域不在可见范围内，则自动滚动进可见范围
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if(!err){//这是react，发出action->model.form.effect中有此函数，然后调用了一个fake->service,到mock
+                this.props.dispatch({
+                    type: 'form/submitRegularForm',
+                    payload: values,
+                });
+            }
+        });
+    };
+
   state = {
     width: '100%',
   };
@@ -77,6 +101,205 @@ class AdvancedForm extends PureComponent {
   render() {
     const { form, dispatch, submitting } = this.props;
     const { getFieldDecorator, validateFieldsAndScroll, getFieldsError } = form;
+
+    const formItemLayout = {
+            labelCol: {
+            xs: { span: 24 },
+            sm: { span: 7 },
+            },
+            wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 12 },
+            md: { span: 10 },
+            },
+        };
+    const submitFormLayout = {
+        wrapperCol: {
+        xs: { span: 24, offset: 0 },
+        sm: { span: 10, offset: 7 },
+        },
+    };
+
+    const classColumns = [{
+            title: '订单编号',
+            dataIndex: 'ID',
+            key: 'ID',
+            },{
+            title: '订单名',//列头显示文字
+            dataIndex: 'name',//在数据项中的key，则data中要有个name项
+            key: 'name',//React需要的key，有dataIndex则无需
+            }, {
+            title: '数量(万罐)',
+            dataIndex: 'num',
+            key: 'num',
+            }, {
+            title: '规格(ml)',
+            dataIndex: 'standard',
+            key: 'standard',
+            },  {
+            title: '交付时间',
+            key: 'time',
+            render:()=>(
+              <span>
+                <DatePicker placeholder={['交付日期']} style={{ width: '100%' }} />
+              </span>
+            )                                                
+        }];
+    const productColumns = [{
+        title: '物料编号',
+        dataIndex: 'ID',
+        key: 'ID',
+        },{
+        title: '物料描述',//列头显示文字
+        dataIndex: 'name',//在数据项中的key，则data中要有个name项
+        key: 'name',//React需要的key，有dataIndex则无需
+        }, {
+        title: '数量',
+        dataIndex: 'num',
+        key: 'num',
+        }, {
+        title: '单位',
+        dataIndex: 'standard',
+        key: 'standard',
+        }, {
+        title: '现有库存',
+        dataIndex: 'remain',
+        key: 'remain', 
+        }, {
+        title: '交付时间',
+        key: 'time',
+        render:()=>(
+          <span>
+            <DatePicker placeholder={['交付日期']} style={{ width: '100%' }} />
+          </span>
+        )                                              
+    }];
+    const productData = [
+      {
+        ID:25100340,
+        name:"印刷辊φ90.5x196.7",
+        num:20,
+        standard:'PC',
+        remain:2,
+      }, {
+        ID:25100341,
+        name:"印刷辊φ92.08x196.7",
+        num:15,
+        standard:'PC',
+        remain:5,
+      }, {
+        ID:25100342,
+        name:"印刷辊φ75.0x196.7",
+        num:10,
+        standard:'PC',
+        remain:5,
+      }, {
+        ID:250401340,
+        name:"油管接头",
+        num:4,
+        standard:'EA',
+        remain:2,
+      }, {
+        ID:250401668,
+        name:"英制针规0.021″",
+        num:2,
+        standard:'PC',
+        remain:0,
+      }
+    ];
+    const classAData = [{
+        key: '1',
+        ID: 1602,
+        name: '台州石梁百威哈冰爽',
+        num: 40,
+        standard: 500,
+      },{
+        key: '2',
+        ID: 1701,
+        name: '杭州青啤崂山金指环',
+        num: 25,
+        standard: 500,
+      },{
+        key: '3',
+        ID: 1702,
+        name: '杭州青啤崂山金指环',
+        num: 30,
+        standard: 500,
+      },{
+        key: '4',
+        ID: 1503,
+        name: '余杭华润8度勇闯天涯',
+        num: 100,
+        standard: 330,
+      },{
+        key: '5',
+        ID: 1705,
+        name: '浙江太古可乐',
+        num: 150,
+        standard: 330,
+    }];
+    const classBData = [{
+        key: '1',
+        ID: 1602,
+        name: '台州石梁百威哈冰爽',
+        num: 40,
+        standard: 500,
+      },{
+        key: '2',
+        ID: 1703,
+        name: '杭州青啤崂山金指环',
+        num: 25,
+        standard: 500,
+      },{
+        key: '3',
+        ID: 1702,
+        name: '杭州青啤崂山金指环',
+        num: 30,
+        standard: 500,
+      },{
+        key: '4',
+        ID: 1601,
+        name: '锐澳微醺',
+        num: 100,
+        standard: 330,
+      },{
+        key: '5',
+        ID: 1605,
+        name: '浙江太古可乐',
+        num: 150,
+        standard: 330,
+    }];
+    const classCData = [{
+        key: '1',
+        ID: 1602,
+        name: '台州石梁百威哈冰爽',
+        num: 40,
+        standard: 500,
+      },{
+        key: '2',
+        ID: 1701,
+        name: '杭州青啤崂山金指环',
+        num: 25,
+        standard: 500,
+      },{
+        key: '3',
+        ID: 1702,
+        name: '杭州青啤崂山金指环',
+        num: 30,
+        standard: 500,
+      },{
+        key: '4',
+        ID: 1601,
+        name: '锐澳微醺',
+        num: 100,
+        standard: 330,
+      },{
+        key: '5',
+        ID: 1701,
+        name: '浙江太古可乐',
+        num: 150,
+        standard: 330,
+    }];
     const validate = () => {
       validateFieldsAndScroll((error, values) => {
         if (!error) {
@@ -129,155 +352,177 @@ class AdvancedForm extends PureComponent {
     };
     return (
       <PageHeaderLayout wrapperClassName={styles.advancedForm}>
-        <Card title="物料管理" className={styles.card} bordered={false}>
-          <Form layout="vertical" hideRequiredMark>
-            <Row gutter={6}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.name}>
-                  {getFieldDecorator('name', {
-                    rules: [{ required: true, message: '请输入仓库名称' }],
-                  })(<Input placeholder="请输入仓库名称" />)}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.url}>
-                  {getFieldDecorator('url', {
-                    rules: [{ required: true, message: '请选择' }],
-                  })(
-                    <Input
-                      style={{ width: '100%' }}
-                      addonBefore="http://"
-                      addonAfter=".com"
-                      placeholder="请输入"
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.owner}>
-                  {getFieldDecorator('owner', {
-                    rules: [{ required: true, message: '请选择管理员' }],
-                  })(
-                    <Select placeholder="请选择管理员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={6}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.approver}>
-                  {getFieldDecorator('approver', {
-                    rules: [{ required: true, message: '请选择审批员' }],
-                  })(
-                    <Select placeholder="请选择审批员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.dateRange}>
-                  {getFieldDecorator('dateRange', {
-                    rules: [{ required: true, message: '请选择生效日期' }],
-                  })(
-                    <RangePicker placeholder={['开始日期', '结束日期']} style={{ width: '100%' }} />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.type}>
-                  {getFieldDecorator('type', {
-                    rules: [{ required: true, message: '请选择仓库类型' }],
-                  })(
-                    <Select placeholder="请选择仓库类型">
-                      <Option value="private">私密</Option>
-                      <Option value="public">公开</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
+        <Card title="订单管理" className={styles.card} bordered={false}>
+          <Tabs defaultActiveKey="A" size="large" tabBarStyle={{ marginBottom: 24 }}>
+            <TabPane tab="A组" key="A">
+                <Table
+                    selectedRows 
+                    columns={classColumns} 
+                    dataSource={classAData} 
+                />
+            </TabPane>
+            <TabPane tab="B组" key="B">
+                <Table
+                    selectedRows 
+                    columns={classColumns} 
+                    dataSource={classBData} 
+                />
+            </TabPane>
+            <TabPane tab="C组" key="C">
+                <Table
+                    selectedRows 
+                    columns={classColumns} 
+                    dataSource={classCData} 
+                />
+            </TabPane>
+          </Tabs>
+          <Button type="dashed" style={{ width: '100%', marginBottom: 8 }} icon="plus">
+              添加
+          </Button>
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 450, marginTop: 8, marginBottom: 8 }} loading={submitting}>
+                提交
+          </Button>
+          <Button style={{marginLeft:16}}>保存</Button>
         </Card>
-        <Card title="任务管理" className={styles.card} bordered={false}>
-          <Form layout="vertical" hideRequiredMark>
-            <Row gutter={16}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.name2}>
-                  {getFieldDecorator('name2', {
-                    rules: [{ required: true, message: '请输入' }],
-                  })(<Input placeholder="请输入" />)}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.url2}>
-                  {getFieldDecorator('url2', {
-                    rules: [{ required: true, message: '请选择' }],
-                  })(<Input placeholder="请输入" />)}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.owner2}>
-                  {getFieldDecorator('owner2', {
-                    rules: [{ required: true, message: '请选择管理员' }],
-                  })(
-                    <Select placeholder="请选择管理员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.approver2}>
-                  {getFieldDecorator('approver2', {
-                    rules: [{ required: true, message: '请选择审批员' }],
-                  })(
-                    <Select placeholder="请选择审批员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.dateRange2}>
-                  {getFieldDecorator('dateRange2', {
-                    rules: [{ required: true, message: '请输入' }],
-                  })(
-                    <TimePicker
-                      placeholder="提醒时间"
-                      style={{ width: '100%' }}
-                      getPopupContainer={trigger => trigger.parentNode}
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.type2}>
-                  {getFieldDecorator('type2', {
-                    rules: [{ required: true, message: '请选择仓库类型' }],
-                  })(
-                    <Select placeholder="请选择仓库类型">
-                      <Option value="private">私密</Option>
-                      <Option value="public">公开</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
+        <Card title="采购申请" className={styles.card} bordered={false}>
+          <Table
+              selectedRows 
+              columns={productColumns} 
+              dataSource={productData} 
+          />
+          <Button type="dashed" style={{ width: '100%', marginBottom: 8 }} icon="plus">
+              添加
+          </Button>
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 450, marginTop: 8, marginBottom: 8 }} loading={submitting}>
+                提交
+          </Button>
+          <Button style={{marginLeft:16}}>保存</Button>
         </Card>
-        <Card title="成员管理" bordered={false}>
-          {getFieldDecorator('members', {
-            initialValue: tableData,
-          })(<TableForm />)}
+        <Card bordered={false} title="成员管理|新增人员" style={{marginTop:16}}>
+            <Form onSubmit={this.handleSubmit} style={{marginTop:8}}>
+                <FormItem {...formItemLayout} label="姓名">
+                    {//这个函数是包装控件。经过 getFieldDecorator 包装的控件，表单控件会自动添加value和onChange
+                    }
+                    {getFieldDecorator('title',{
+                    rules:[
+                        {
+                            required: true,
+                            message: '请输入姓名',
+                        },
+                    ],
+                    })(<Input placeholder="请输入姓名" />)}
+                </FormItem>
+                <FormItem {...formItemLayout} label="性别">
+                    {//这个函数是包装控件。经过 getFieldDecorator 包装的控件，表单控件会自动添加value和onChange
+                    }
+                    {getFieldDecorator('gender',{
+                        rules:[
+                            {
+                                required: true,
+                                message: '请输入性别',
+                            },
+                        ],
+                    })(
+                        <div>
+                        {getFieldDecorator('gender',{
+                            initialValue: "1",
+                        })(
+                            <Radio.Group>
+                                <Radio value="1">男</Radio>
+                                <Radio value="2">女</Radio>
+                            </Radio.Group>                                        
+                        )}
+                        </div>
+                    )} 
+                </FormItem>
+                <FormItem {...formItemLayout} label="出生日期">
+                    {getFieldDecorator('date-picker', {
+                        rules: [
+                        {
+                            required: false,
+                            message: '请输入日期',
+                        },
+                        ],
+                    })(<DatePicker />)}
+                </FormItem>
+                <FormItem {...formItemLayout} label="部门">
+                    {getFieldDecorator('department', {
+                        rules: [
+                        {
+                            required: true,
+                            message: '所属部门',
+                        },
+                        ],
+                    })(<Input placeholder="请输入所属部门"/>)}
+                </FormItem>
+                <FormItem {...formItemLayout} label="联系方式">
+                    {getFieldDecorator('tel', {
+                        rules: [
+                        {
+                            required: true,
+                            message: '联系方式',
+                        },
+                        ],
+                    })(<Input placeholder="请输入电话号码"/>)}
+                </FormItem>
+                <FormItem {...formItemLayout} label="职位">
+                    {//这个函数是包装控件。经过 getFieldDecorator 包装的控件，表单控件会自动添加value和onChange
+                    }
+                    {getFieldDecorator('place',{
+                        rules:[
+                            {
+                                required: false,
+                                message: '请输入职称',
+                            },
+                        ],
+                    })(
+                        <div>
+                        {getFieldDecorator('place',{
+                            initialValue: "1",
+                        })(
+                            <Radio.Group>
+                                <Radio value="1">总经理</Radio>
+                                <Radio value="2">副总经理</Radio>                                        
+                                <Radio value="3">高级工程师</Radio>
+                                <Radio value="4">工程师</Radio>
+                                <Radio value="5">总监</Radio>
+                                <Radio value="6">厂长</Radio>
+                                <Radio value="7">主任</Radio>
+                                <Radio value="8">经理</Radio>
+                                <Radio value="8">工人</Radio>                                                                                                                                                                                                                                                                            
+                            </Radio.Group>                                        
+                        )}
+                        </div>
+                    )} 
+                </FormItem>
+                <FormItem {...formItemLayout} label="描述">
+                    {getFieldDecorator('description', {
+                        rules: [
+                        {
+                            required: false,
+                            message: '请输入描述',
+                        },
+                        ],
+                    })(
+                        <Input
+                        style={{ minHeight: 32 }}
+                        placeholder="请输入个人描述"
+                        rows={4}
+                        />
+                    )}
+                </FormItem>
+                <FormItem>
+                    <p style={{marginLeft:400}}>
+                        注：标注*的选项为必填项
+                    </p>
+                </FormItem>
+                <FormItem {...submitFormLayout} style={{marginTop:22}}>
+                    <Button type="primary" htmlType="submit" loading={submitting}>
+                        提交
+                    </Button>
+                    <Button style={{marginLeft:16}}>保存</Button>
+                </FormItem>
+            </Form>
         </Card>
         <FooterToolbar style={{ width: this.state.width }}>
           {getErrorInfo()}

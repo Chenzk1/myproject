@@ -72,22 +72,22 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
-    '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+    '/dashboard/product': {
+      component: dynamicWrapper(app, ['product'], () => import('../routes/Dashboard/Product')),
     },
     '/dashboard/monitor': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
     },
-    '/dashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
-        import('../routes/Dashboard/Workplace')
+    '/dashboard/reject': {
+      component: dynamicWrapper(app, ['reject'], () =>
+        import('../routes/Dashboard/Reject')
       ),
       // hideInBreadcrumb: true,
       // name: '工作台',
       // authority: 'admin',
     },
-    '/dashboard/test': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Test')),
+    '/dashboard/stop': {
+      component: dynamicWrapper(app, ['stop'], () => import('../routes/Dashboard/Stop')),
     },
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
@@ -111,7 +111,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
     },
     '/list/table-list': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
+      component: dynamicWrapper(app, ['form'], () => import('../routes/List/TableList')),
     },
     '/list/basic-list': {
       component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>

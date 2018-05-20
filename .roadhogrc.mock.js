@@ -1,6 +1,7 @@
 import mockjs from 'mockjs';
 import { getRule, postRule } from './mock/rule';
-import { getActivities, getNotice, getFakeList } from './mock/api';
+import { getProductData, getStopData, getRejectData,
+  getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
 import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
@@ -13,6 +14,10 @@ const noProxy = process.env.NO_PROXY === 'true';
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   // 支持值为 Object 和 Array
+  'GET /api/productdata': getProductData,
+  'GET /api/stopdata': getStopData,
+  'GET /api/rejectdata': getRejectData,
+  
   'GET /api/currentUser': {
     $desc: '获取当前用户接口',
     $params: {
@@ -23,7 +28,7 @@ const proxy = {
     },
     $body: {
       name: '仲锴',
-      avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+      avatar: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3062662491,2790275235&fm=27&gp=0.jpg',
       userid: '00000001',
       notifyCount: 12,
     },

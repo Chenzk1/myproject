@@ -1,92 +1,60 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import {
+  Row,
+  Col,
+  Icon,
+  Card,
+  Tabs,
+  Table,
+  Radio,
+  DatePicker,
+  Tooltip,
+  Menu,
+  Dropdown,
+} from 'antd';
+import numeral from 'numeral';
+import {
+  ChartCard,
+  yuan,
+  MiniArea,
+  MiniBar,
+  MiniProgress,
+  Field,
+  Bar,
+  Pie,
+  TimelineChart,
+} from 'components/Charts';
+import Trend from 'components/Trend';
+import NumberInfo from 'components/NumberInfo';
+import { getTimeDistance } from '../../utils/utils';
 
-import { Radar } from 'components/Charts';
-import EditableLinkGroup from 'components/EditableLinkGroup';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import styles from './Analysis.less';
 
-import styles from './Workplace.less';
+const { TabPane } = Tabs;
+const { RangePicker,MonthPicker } = DatePicker;
 
-const links = [
-  {
-    title: '操作一',
-    href: '',
-  },
-  {
-    title: '操作二',
-    href: '',
-  },
-  {
-    title: '操作三',
-    href: '',
-  },
-  {
-    title: '操作四',
-    href: '',
-  },
-  {
-    title: '操作五',
-    href: '',
-  },
-  {
-    title: '操作六',
-    href: '',
-  },
-];
+const rankingListData = [];
+for (let i = 0; i < 7; i += 1) {
+  rankingListData.push({
+    title: `工序 ${i} `,
+    total: 323234,
+  });
+}
 
-const members = [
-  {
-    id: 'members-1',
-    title: '科学搬砖组',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-    link: '',
-  },
-  {
-    id: 'members-2',
-    title: '程序员日常',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png',
-    link: '',
-  },
-  {
-    id: 'members-3',
-    title: '设计天团',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/gaOngJwsRYRaVAuXXcmB.png',
-    link: '',
-  },
-  {
-    id: 'members-4',
-    title: '中二少女团',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/ubnKSIfAJTxIgXOKlciN.png',
-    link: '',
-  },
-  {
-    id: 'members-5',
-    title: '骗你学计算机',
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/WhxKECPNujWoWEFNdnJE.png',
-    link: '',
-  },
-];
-
-@connect(({ project, activities, chart, loading }) => ({
-  project,
-  activities,
+@connect(({ chart, loading }) => ({
   chart,
-  projectLoading: loading.effects['project/fetchNotice'],
-  activitiesLoading: loading.effects['activities/fetchList'],
+  loading: loading.effects['chart/fetch'],
 }))
-export default class Workplace extends PureComponent {
+export default class Analysis extends Component {
+  state = {
+    salesType: 'all',
+    currentTabKey: '',
+    rangePickerValue: getTimeDistance('year'),
+  };
+
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'project/fetchNotice',
-    });
-    dispatch({
-      type: 'activities/fetchList',
-    });
-    dispatch({
+    this.props.dispatch({
       type: 'chart/fetch',
     });
   }
@@ -98,168 +66,231 @@ export default class Workplace extends PureComponent {
     });
   }
 
-  renderActivities() {
-    const { activities: { list } } = this.props;
-    return list.map(item => {
-      const events = item.template.split(/@\{([^{}]*)\}/gi).map(key => {
-        if (item[key]) {
-          return (
-            <a href={item[key].link} key={item[key].name}>
-              {item[key].name}
-            </a>
-          );
-        }
-        return key;
-      });
-      return (
-        <List.Item key={item.id}>
-          <List.Item.Meta
-            avatar={<Avatar src={item.user.avatar} />}
-            title={
-              <span>
-                <a className={styles.username}>{item.user.name}</a>
-                &nbsp;
-                <span className={styles.event}>{events} </span>
-              </span>
-            }
-            description={
-              <span className={styles.datetime} title={item.updatedAt}>
-                {moment(item.updatedAt).fromNow()}
-              </span>
-            }
-          />
-        </List.Item>
-      );
+  handleChangeSalesType = e => {
+    this.setState({
+      salesType: e.target.value,
     });
+  };
+
+  handleTabChange = key => {
+    this.setState({
+      currentTabKey: key,
+    });
+  };
+
+  handleRangePickerChange = rangePickerValue => {
+    this.setState({
+      rangePickerValue,
+    });
+
+    this.props.dispatch({
+      type: 'chart/fetchSalesData',
+    });
+  };
+
+  selectDate = type => {
+    this.setState({
+      rangePickerValue: getTimeDistance(type),
+    });
+
+    this.props.dispatch({
+      type: 'chart/fetchSalesData',
+    });
+  };
+
+  isActive(type) {
+    const { rangePickerValue } = this.state;
+    const value = getTimeDistance(type);
+    if (!rangePickerValue[0] || !rangePickerValue[1]) {
+      return;
+    }
+    if (
+      rangePickerValue[0].isSame(value[0], 'day') &&
+      rangePickerValue[1].isSame(value[1], 'day')
+    ) {
+      return styles.currentDate;
+    }
   }
 
   render() {
+    const { rangePickerValue, salesType, currentTabKey } = this.state;
+    const { chart, loading } = this.props;
     const {
-      project: { notice },
-      projectLoading,
-      activitiesLoading,
-      chart: { radarData },
-    } = this.props;
+      visitData,
+      visitData2,
+      salesData,
+      searchData,
+      offlineData,
+      offlineChartData,
+      salesTypeData,
+      salesTypeDataOnline,
+      salesTypeDataOffline,
+    } = chart;
 
-    const pageHeaderContent = (
-      <div className={styles.pageHeaderContent}>
-        <div className={styles.avatar}>
-          <Avatar
-            size="large"
-            src="https://gw.alipayobjects.com/zos/rmsportal/sBxjgqiuHMGRkIjqlQCd.png"
+    const salesPieData =
+      salesType === 'all'
+        ? salesTypeData
+        : salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
+
+    const menu = (
+      <Menu>
+        <Menu.Item>操作一</Menu.Item>
+        <Menu.Item>操作二</Menu.Item>
+      </Menu>
+    );
+
+    const iconGroup = (
+      <span className={styles.iconGroup}>
+        <Dropdown overlay={menu} placement="bottomRight">
+          <Icon type="ellipsis" />
+        </Dropdown>
+      </span>
+    );
+
+    const salesExtra = (
+      <div className={styles.salesExtraWrap}>
+        <div className={styles.salesExtra}>
+          <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
+            今日
+          </a>
+          <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
+            本周
+          </a>
+          <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
+            本月
+          </a>
+          <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
+            全年
+          </a>
+        </div>
+        <RangePicker
+          value={rangePickerValue}
+          onChange={this.handleRangePickerChange}
+          style={{ width: 256 }}
+        />
+      </div>
+    );
+
+    const columns = [
+      {
+        title: '月份',
+        dataIndex: 'month',
+        key: 'month',
+      },
+      {
+        title: '入库产量',
+        dataIndex: 'totalProduct',
+        key: 'totalProduct',
+      },
+      {
+        title: '合格产量',
+        dataIndex: 'qualifyProduct',
+        key: 'qualifyProduct',
+      },
+      {
+        title: '废品量',
+        dataIndex: 'totalWaste',
+        key: 'totalWaste',
+      },
+    ];
+
+    const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
+
+    const CustomTab = ({ data, currentTabKey: currentKey }) => (
+      <Row gutter={8} style={{ width: 138, margin: '8px 0' }}>
+        <Col span={12}>
+          <NumberInfo
+            title={data.name}
+            subTitle="转化率"
+            gap={2}
+            total={`${data.cvr * 100}%`}
+            theme={currentKey !== data.name && 'light'}
           />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.contentTitle}>早安，陈仲锴，祝你开心每一天！</div>
-          <div>浙大电气工程学院-中粮包装 在Dashboard/Workplace</div>
-        </div>
-      </div>
+        </Col>
+        <Col span={12} style={{ paddingTop: 36 }}>
+          <Pie
+            animate={false}
+            color={currentKey !== data.name && '#BDE4FF'}
+            inner={0.55}
+            tooltip={false}
+            margin={[0, 0, 0, 0]}
+            percent={data.cvr * 100}
+            height={64}
+          />
+        </Col>
+      </Row>
     );
 
-    const extraContent = (
-      <div className={styles.extraContent}>
-        <div className={styles.statItem}>
-          <p>项目数</p>
-          <p>56</p>
-        </div>
-        <div className={styles.statItem}>
-          <p>团队内排名</p>
-          <p>
-            8<span> / 24</span>
-          </p>
-        </div>
-        <div className={styles.statItem}>
-          <p>项目访问</p>
-          <p>2,223</p>
-        </div>
-      </div>
-    );
+    const topColResponsiveProps = {
+      xs: 24,
+      sm: 12,
+      md: 12,
+      lg: 12,
+      xl: 8,
+      style: { marginBottom: 24 },
+    };
 
     return (
-      <PageHeaderLayout content={pageHeaderContent} extraContent={extraContent}>
-        <Row gutter={24}>
-          <Col xl={16} lg={24} md={24} sm={24} xs={24}>
-            <Card
-              className={styles.projectList}
-              style={{ marginBottom: 24 }}
-              title="进行中的项目"
+      <Fragment>
+        <Card
+          loading={loading}
+          bordered={false}
+          title="2017年废品产量统计"
+          extra={<MonthPicker placeholder="请选择月份" />}
+          style={{ marginBottom: 24 }}
+        >
+          <Table
+            size="middle"
+            columns={columns}
+            dataSource={searchData}
+            pagination={{
+              style: { marginBottom: 0 },
+              pageSize: 6,
+            }}
+          />
+        </Card>
+        <Row gutter = {24} >
+         <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+            <ChartCard
               bordered={false}
-              extra={<Link to="/">全部项目</Link>}
-              loading={projectLoading}
-              bodyStyle={{ padding: 0 }}
+              title="月度废品率"
+              footer={<Field label="年度废品率" value={numeral(1234).format('0,0')} />}
+              contentHeight={140}
             >
-              {notice.map(item => (
-                <Card.Grid className={styles.projectGrid} key={item.id}>
-                  <Card bodyStyle={{ padding: 0 }} bordered={false}>
-                    <Card.Meta
-                      title={
-                        <div className={styles.cardTitle}>
-                          <Avatar size="small" src={item.logo} />
-                          <Link to={item.href}>{item.title}</Link>
-                        </div>
-                      }
-                      description={item.description}
-                    />
-                    <div className={styles.projectItemContent}>
-                      <Link to={item.memberLink}>{item.member || ''}</Link>
-                      {item.updatedAt && (
-                        <span className={styles.datetime} title={item.updatedAt}>
-                          {moment(item.updatedAt).fromNow()}
-                        </span>
-                      )}
-                    </div>
-                  </Card>
-                </Card.Grid>
-              ))}
-            </Card>
-            <Card
-              bodyStyle={{ padding: 0 }}
-              bordered={false}
-              className={styles.activeCard}
-              title="动态"
-              loading={activitiesLoading}
-            >
-              <List loading={activitiesLoading} size="large">
-                <div className={styles.activitiesList}>{this.renderActivities()}</div>
-              </List>
-            </Card>
-          </Col>
-          <Col xl={8} lg={24} md={24} sm={24} xs={24}>
-            <Card
-              style={{ marginBottom: 24 }}
-              title="快速开始 / 便捷导航"
-              bordered={false}
-              bodyStyle={{ padding: 0 }}
-            >
-              <EditableLinkGroup onAdd={() => {}} links={links} linkElement={Link} />
-            </Card>
-            <Card
-              style={{ marginBottom: 24 }}
-              bordered={false}
-              title="XX 指数"
-              loading={radarData.length === 0}
-            >
-              <div className={styles.chart}>
-                <Radar hasLegend height={343} data={radarData} />
-              </div>
-            </Card>
-            <Card bodyStyle={{ paddingTop: 12, paddingBottom: 12 }} bordered={false} title="团队">
-              <div className={styles.members}>
-                <Row gutter={48}>
-                  {members.map(item => (
-                    <Col span={12} key={`members-item-${item.id}`}>
-                      <Link to={item.link}>
-                        <Avatar src={item.logo} size="small" />
-                        <span className={styles.member}>{item.title}</span>
-                      </Link>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            </Card>
+              <MiniArea color="#375FE4" data={visitData} />
+            </ChartCard>
           </Col>
         </Row>
-      </PageHeaderLayout>
+        <Card
+          loading={loading}
+          bordered={false}
+          title="废品分布统计"
+          extra={<MonthPicker placeholder="请选择月份" />}
+          style={{ marginTop: 24, marginBottom: 24}}
+        >
+          <Row>
+            <Col xl={16} lg={12} md={12} sm={24} xs={24}>
+              <div className={styles.salesBar} width={700}>
+                <Bar style={{ height: 295, width: 700}} data={salesData} />
+              </div>
+            </Col>
+            <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+              <div className={styles.salesRank}>
+                <h4>分布占比</h4>
+                <ul className={styles.rankingList}>
+                  {rankingListData.map((item, i) => (
+                    <li key={item.title}>
+                      <span className={i < 3 ? styles.active : ''}>{i + 1}</span>
+                      <span>{item.title}</span>
+                      <span>{numeral(item.total).format('0,0')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+      </Fragment>
     );
   }
 }

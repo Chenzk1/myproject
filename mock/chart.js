@@ -29,7 +29,7 @@ for (let i = 0; i < 12; i += 1) {
   });
 }
 const searchData = [];
-for (let i = 0; i < 50; i += 1) {
+for (let i = 0; i < 13; i += 1) {
   searchData.push({
     index: i + 1,
     keyword: `搜索关键词-${i}`,
@@ -123,9 +123,9 @@ for (let i = 0; i < 10; i += 1) {
   });
 }
 const offlineChartData = [];
-for (let i = 0; i < 20; i += 1) {
+for (let i = 0; i < 12; i += 1) {
   offlineChartData.push({
-    x: new Date().getTime() + 1000 * 60 * 30 * i,
+    x: i+1,
     y1: Math.floor(Math.random() * 100) + 10,
     y2: Math.floor(Math.random() * 100) + 10,
   });
@@ -179,6 +179,22 @@ radarOriginData.forEach(item => {
   });
 });
 
+const yearData = [];
+for (let i = 0; i < 12; i += 1) {
+  yearData.push({
+    x: `${i + 1}月`,
+    y: Math.floor(Math.random() * 1000) + 200,
+  });
+}
+const monthData = [];
+for (let i = 0; i < 13; i += 1) {
+  monthData.push({
+    month: i,
+    id: i,
+    num: Math.floor(Math.random() * 1000) + 200,
+  });
+}
+
 export const getFakeChartData = {
   visitData,
   visitData2,
@@ -190,6 +206,8 @@ export const getFakeChartData = {
   salesTypeDataOnline,
   salesTypeDataOffline,
   radarData,
+  monthData,
+  yearData
 };
 
 export default {

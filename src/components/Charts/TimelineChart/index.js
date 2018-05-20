@@ -38,7 +38,7 @@ export default class TimelineChart extends React.Component {
 
     const ds = new DataSet({
       state: {
-        start: data[0].x,
+        start: data[0].x,//dashboard->stop.js中的timelineChart需要重新渲染，改一下重新编译即可
         end: data[data.length - 1].x,
       },
     });
@@ -113,9 +113,9 @@ export default class TimelineChart extends React.Component {
             <Legend name="key" position="top" />
             <Geom type="line" position="x*value" size={borderWidth} color="key" />
           </Chart>
-          <div style={{ marginRight: -20 }}>
+          {/*<div style={{ marginRight: -20 }}>
             <SliderGen />
-          </div>
+          </div>*/}
         </div>
       </div>
     );
